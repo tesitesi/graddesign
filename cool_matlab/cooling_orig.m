@@ -1,26 +1,24 @@
 % ロケットエンジン再生冷却計算
 
-cccalcS5 = readmatrix('cooling_input.csv')
-
-gamma_g = 1.126  %ガス比熱比
+gamma_g = 1.125  %ガス比熱比
 gamma_c = 1.66      %冷却剤比熱比
 Pr_g = 4 * gamma_g / (9 * gamma_g - 5)    %ガスプラントル数
 Tcin = 112  %冷却剤入口温度 [K]
 Cpg = 8000  %燃焼ガス定圧比熱[J/kg K]
 Cpc = 6000   %冷却剤定圧比熱 [J/kg K]
-Rt = 0.062 %スロート半径 [m]
+Rt = 0.05788203 %スロート半径 [m]
 Dt = Rt * 2     %スロート径 [m]
 At = Rt^2 * pi  %スロート面積
-Tc = 3636.42    %チャンバ温度 [K]
+Tc = 3510.96    %チャンバ温度 [K]
 g = 9.80655 %重力加速度[m/s^2]
-Pc = 6.0 *10^6  %チェンバ圧力[Pa]
-Gc = 10.30 %冷却剤流量[kg/s]
-Gg = 41.19   %推進剤流量[kg/s]
+Pc = 4.0 *10^6  %チェンバ圧力[Pa]
+Gc = 6.8182 %冷却剤流量[kg/s]
+Gg = 30.0   %推進剤流量[kg/s]
 c = Pc * At / Gg   %特性排気速度[m/s]
 lambda = 390    %熱伝導率[W/mK]
-lambda_cond = 0.100  %冷却剤熱抵抗[W/m*K]
+lambda_cond = 0.189  %冷却剤熱抵抗[W/m*K]
 mu_c = 0.000123  %冷却剤粘性係数[Pa*s]
-rho_c = 800.01
+rho_c = 426.32
 Pr_c = mu_c * Cpc / lambda_cond    %冷却剤プラントル数
 
 deltaP = 0

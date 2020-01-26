@@ -78,7 +78,7 @@ a *= 39.3701 #[in]
 b = 4e-3 #[m] #冷却溝幅
 b *= 39.3701 #[in]
 
-n = 110.
+n = 100000000000000.
 
 Al = a*b*n #[m2] # 冷却溝全部の断面積
 Al *= 39.3701 * 39.3701 #[in2]
@@ -263,7 +263,7 @@ print('csv output start')
 
 out_Twg = np.array(out_Twg) #[R]
 out_Tl = np.array(out_Tl) #[R]
-out_Twg *= 5. / 9. / 4. #[K]
+out_Twg *= 5. / 9. #[K]
 out_Tl *= 5. / 9. #[K]
 np.savetxt(os.path.dirname(__file__)+'/cool_out_Twg.csv', out_Twg.T)
 np.savetxt(os.path.dirname(__file__)+'/cool_out_Tl.csv', out_Tl.T)
@@ -279,6 +279,7 @@ plt.xlabel('Distance from Throat [m]')
 plt.ylabel('Temperature [K]')
 plt.scatter(X,out_Tl, label='Tl',s=1)
 plt.scatter(X,out_Twg, label='Twg',s=1)
+#plt.scatter(X,Tg*5./9., label='Tg',s=1)
 plt.legend()
 plt.show()
 

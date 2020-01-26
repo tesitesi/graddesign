@@ -29,7 +29,7 @@ x = cccalcS5(:,1)    %軸方向座標
 r = cccalcS5(:,2)   %ノズル半径
 A = cccalcS5(:,3)   %ノズル面積
 rho = cccalcS5(:,4) %燃焼ガス密度
-T = cccalcS5(:,16)   %燃焼ガス温度
+T = cccalcS5(:,5)   %燃焼ガス温度
 p = cccalcS5(:,6)   %燃焼ガス圧力
 M = cccalcS5(:,7)   %燃焼ガスマッハ数
 ug = cccalcS5(:,8)  %燃焼ガス速度
@@ -43,7 +43,7 @@ Dc = cccalcS5(:,15) %冷却剤流路等価直径
 lambda = cccalcS5(:,20)
 Dp = cccalcS5(:,21)
 
-throat = 745   %スロート位置
+throat = 286   %スロート位置
 L = size(x)
 L = L(1)
 

@@ -1,20 +1,24 @@
-# 卒業設計
+# ロケット卒業設計
 # ベルノズルのコンター（半径分布）を決める
+
 import numpy as np 
 import matplotlib.pyplot as plt 
 
-X = []
-contour = []
-dx = 0.001
+X = [] # 結果を入れる行列
+contour = [] #結果を入れる行列
 
-r_t = 0.062 # スロート部半径
-r_e = 0.6515 # 出口部半径
-l_conb = 0.193 # 燃焼室長さ
+dx = 0.001 # 格子間隔 [m]
+
+r_t = 0.062 # スロート部半径 [m]
+epsilon = 110. #開口比
+
+r_e = r_t * np.sqrt(epsilon) # 出口部半径 [m]
+l_conb = 0.193 # 燃焼室長さ [m]
 theta_i = 30.0 # 膨張接続部角度
-theta_e = 5.0 # 出口角度
+#theta_e = 8.0 # 出口角度 #廃止
 
 theta_i = theta_i * np.pi / 180.
-theta_e = theta_e * np.pi / 180.
+#theta_e = theta_e * np.pi / 180.
 
 r_conb = np.sqrt(3.0) * r_t # 燃焼室＝ノズル入口半径
 
@@ -50,21 +54,28 @@ for x in [round(i * 0.001, 3) for i in range(int(0+dx)*1000, int(x1*1000), int(d
     contour.append(a_d1 * x * x + r_t)
 
 
-#b2 = (l_d * np.tan(theta_i) - x1 * np.tan(theta_e)) / (np.tan(theta_i) - np.tan(theta_e))
-#a2 = (np.tan(theta_i)-np.tan(theta_e)) / (2*l_d - 2*x1)
+# theta_i, theta_e を指定して、出口径を無視する場合
+#a2 = - (np.tan(theta_i)-np.tan(theta_e)) / (2*l_d - 2*x1)
+#b2 = np.tan(theta_e) + 2 * a2 * l_d
 
-a2 = (np.tan(theta_i)-np.tan(theta_e)) / (2*l_d - 2*x1)
-b2 = np.tan(theta_e) + 2 * a2 * l_d
+# 新しい：出口径、theta_iを指定する。
+x2 = x1 + (r_e - r_t) / np.tan(15 * np.pi / 180.) #ノズル出口座標
+y1 = a_d1 * x1 * x1 + r_t
+
+a2 = ((x1 - x2) + (r_e - y1)) / (x1 - x2)**2
+b2 = 0.9 - 2 * a2 * x1
+c2 = y1 + a2 * x1 * x1 - x1
 
 
-for x in [round(i * 0.001, 3) for i in range(int((x1)*1000), int((l_d+dx)*1000), int(dx*1000))]:
-    #contour.append(-a2 * (x - b2)**2 + a2 * (l_d - b2)**2 + r_e)
-    if -a2 * x * x + b2 * x + r_t > r_e :
-        break
+#for x in [round(i * 0.001, 3) for i in range(int((x1)*1000), int((l_d+dx)*1000), int(dx*1000))]:
+for x in [round(i * 0.001, 3) for i in range(int((x1)*1000), int((x2)*1000), int(dx*1000))]:
     X.append(x)
-    contour.append(-a2 * x * x + b2 * x + r_t)
+    contour.append(a2 * x * x + b2 * x + c2)
+    if (a2 * x * x + b2 * x + c2 > r_e):
+        break
     
-
+theta_e = np.arctan((contour[-1] - contour[-2]) / dx) * 180. / np.pi
+print('最後の角度：' + str(theta_e))
 
 X = np.array(X)
 contour = np.array(contour)
@@ -78,5 +89,5 @@ plt.scatter(X,-contour,s=2,c='blue')
 plt.grid(True)
 plt.show()
 
-#np.savetxt('nozzlecontour_output.csv', contour.T)
-np.savetxt('nozzlecontour_output.csv', X.T)
+np.savetxt('/Users/tesiyosi/dev/graddesign/nozzle/nozzlecontour_output_contour.csv', contour.T)
+np.savetxt('/Users/tesiyosi/dev/graddesign/nozzle/nozzlecontour_output_X.csv', X.T)

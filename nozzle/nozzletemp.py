@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import csv
 
-csv_file = open('nozzletemp_input.csv','r',encoding='utf-8-sig')
+csv_file = open('/Users/tesiyosi/dev/graddesign/nozzle/nozzletemp_input.csv','r',encoding='utf-8-sig')
 
 X = [] 
 M = []
@@ -68,14 +68,13 @@ for x in range(x_throat, x_exit+1, 1):
     gamma = (gamma_throat * (x-x_exit) + gamma_exit * (x_throat-x)) / (x_throat - x_exit)
     T.append( T_0 / (1 + 0.5 * (gamma - 1 )* M[x]*M[x]))
     P.append(P_0 / (1 + 0.5 * (gamma - 1 )* M[x]*M[x])**(gamma/(gamma-1)))
-"""
+
 plt.title("Gas Temperature in Nozzle")
 plt.xlabel('Distance from Throat [m]')
 plt.ylabel('Temperature [K]')
 plt.scatter(X,T,s=2,c='green')
 plt.grid(True)
 plt.show()
-"""
 plt.title("Gas Pressure in Nozzle")
 plt.xlabel('Distance from Throat [m]')
 plt.ylabel('Pressure [MPa]')
@@ -86,4 +85,5 @@ plt.show()
 P = np.array(P)
 T = np.array(T)
 
-np.savetxt('nozzletemp_output.csv', T.T)
+np.savetxt('/Users/tesiyosi/dev/graddesign/nozzle/nozzletemp_output_T.csv', T.T)
+np.savetxt('/Users/tesiyosi/dev/graddesign/nozzle/nozzletemp_output_P.csv', P.T)

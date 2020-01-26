@@ -85,7 +85,7 @@ Al *= 39.3701 * 39.3701 #[in2]
 
 
 # 計算の初期値
-Twg0 = 120. #[K] ：最初の内壁温度
+Twg0 = 100. #[K] ：最初の内壁温度
 Twg0 *= 9. / 5. #[R]
 
 Tl0 =  100. #[K] :最初の冷却剤温度
@@ -178,7 +178,6 @@ def hg(Tg, Twg, M, R):
     sigma = (0.5 * Twg / Tcns * (1. + 0.5 * (gamma - 1.) * M * M) + 0.5)**(-0.68) * (1. + 0.5 * (gamma - 1.) * M * M) **(-0.12)
     At = np.pi * Dt * Dt / 4.
     A = np.pi * R * R
-    print(R/(Dt/2.))
     hg = 0.026 / Dt**0.2 *(ug**0.2 * Cpg / Prg**0.6) * (Pcns* g / cstar)**0.8 * (Dt / Rt)**0.1 * (At / A)**0.9 * sigma
     return hg
 
@@ -215,9 +214,9 @@ Twg = Twg0
 # 刻み幅ごとに進行していくループ計算
 for x in range(len(R)):
     if np.abs(X[x]) <= 0.06:
-        maxitr = 500
+        maxitr = 10000
     else:
-        maxitr = 500
+        maxitr = 10000
     if x % 50 == 0:
         print('Looping at x = ' + str(x))
     if x != 0:
@@ -226,8 +225,11 @@ for x in range(len(R)):
     # ２つの方法で計算した Tl_next が一致するまで計算する
     epsilon = 1000.
     count = 0
-    while epsilon > 1. and count < (2 * maxitr) :
-        Twg = Twg + 1.
+    while np.abs(epsilon) > 1. and count < maxitr :
+        if epsilon > 0:
+            Twg = Twg + 0.1
+        else:
+            Twg = Twg - 0.1
         # 収束するまで1Kずつずらす
         # 燃焼ガスからノズル内壁への熱流束
         q = hg(Tg[x], Twg, M[x], R[x]) * (Tg[x] - Twg)
@@ -238,12 +240,12 @@ for x in range(len(R)):
         # x+1の壁面温度をxの内壁温度と同じに設定
         Twg_next = Twg
         # 壁内熱伝導の式から、x+1での外壁温度を出す
-        Twl_next = Twg_next - q / lambdaw * e
+        Twl_next = Twg_next - e * q / lambdaw 
         # 冷却剤と外壁感の熱伝達の式から、 x+1 での冷却剤温度を出す
         Tl_next_2 = Twl_next - q / hc(Tl_next, Twl_next)
         count = count + 1
-        epsilon = np.abs(Tl_next - Tl_next_2)
-        if count == (2 * maxitr):
+        epsilon = Tl_next - Tl_next_2
+        if count == maxitr:
             print('Warning: Loop Broke Out at X_from_throat = ' + str(X[x]) + " [m]!")
     # データ保存
     out_Tl.append(Tl)
@@ -261,8 +263,8 @@ print('csv output start')
 
 out_Twg = np.array(out_Twg) #[R]
 out_Tl = np.array(out_Tl) #[R]
-out_Twg *= 5. / 9. #[K]
-out_Tl *= 5. / 9.#[K]
+out_Twg *= 5. / 9. / 4. #[K]
+out_Tl *= 5. / 9. #[K]
 np.savetxt(os.path.dirname(__file__)+'/cool_out_Twg.csv', out_Twg.T)
 np.savetxt(os.path.dirname(__file__)+'/cool_out_Tl.csv', out_Tl.T)
 
@@ -276,7 +278,7 @@ plt.title("Temperature in Nozzle")
 plt.xlabel('Distance from Throat [m]')
 plt.ylabel('Temperature [K]')
 plt.scatter(X,out_Tl, label='Tl',s=1)
-#plt.scatter(X,out_Twg, label='Twg',s=1)
+plt.scatter(X,out_Twg, label='Twg',s=1)
 plt.legend()
 plt.show()
 

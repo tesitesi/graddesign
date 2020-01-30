@@ -1,10 +1,10 @@
 # 卒業設計
-# ベルノズルのコンター（半径分布）を決める
+# ベルノズル半径分布をもとに、各部の流れマッハ数を算出する
 import numpy as np 
 import matplotlib.pyplot as plt 
 import csv
 
-csv_file = open('nozzlemach_input.csv','r',encoding='utf-8-sig')
+csv_file = open('/Users/tesiyosi/dev/graddesign/nozzle/nozzlemach_input.csv','r',encoding='utf-8-sig')
 
 X = [] 
 A = []
@@ -28,10 +28,10 @@ gamma_exit = 1.1747
 gamma = 0.
 
 # dx によって変わる
-x_inj = 1
+x_inj = 0
 x_combend = 192
 x_throat = 286
-x_exit = 2046
+x_exit = 1404
 
 M = np.ndarray(x_exit+1)
 
@@ -52,7 +52,7 @@ for x in range(x_combend, x_throat, 1):
     #M[x] = mach(A[x-1],A[x],M[x-1],gamma)
     M[x] = (M_combend * (x_throat - x) + M_throat * (x - x_combend)) / (x_throat - x_combend)
 
-M[x_throat] = 1. + 0.01
+M[x_throat] = 1. + 1e-3
 
 # 膨張部
 for x in range(x_throat+1, x_exit, 1):
@@ -68,4 +68,4 @@ plt.scatter(X,M,s=2,c='red')
 plt.grid(True)
 plt.show()
 
-np.savetxt('nozzlemach_output.csv', M.T)
+np.savetxt('/Users/tesiyosi/dev/graddesign/nozzle/nozzlemach_output.csv', M.T)

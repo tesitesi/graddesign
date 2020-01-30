@@ -49,15 +49,16 @@ b *= 39.3701 #[in]
 
 d = np.sqrt(2) * a
 
-n = 100000000000000.
+n = 100000000000000. * 1000.
 
 Al = a*b*n #[m2] # 冷却溝全部の断面積
 Al *= 39.3701 * 39.3701 #[in2]
 
 # 圧力損失計算用 SI単位のママ使用する。
+Plin = 1.4 * 6. * 1e6 #[Pa] # 冷却溝入口での冷却剤圧力
 rho_c = 800. #[kg/m3] # 冷却剤密度
 uc = mldot / 2.20462 / rho_c / (a * b / 39.3701 / 39.3701) #[m/s] # 冷却剤流速
-dP = 0. #[MPa] # 圧力損失加算器
+dP = 0. #[Pa] # 圧力損失加算器
 
 
 # 計算の初期値
@@ -70,7 +71,7 @@ Tl0 *= 9. / 5. #[R]
 # 出力
 out_Tl = []
 out_Twg = []
-
+out_Pl = [Plin] 
 
 # ==== csvから入力 =====
 print('input start')
@@ -120,11 +121,11 @@ def u(T):
 
 # RP-1 の動粘性係数を in2/s で返す。
 def nyu(T):
-    #if T <= 500:
-    #    nyu = 0.7678 * 0.0393701 * 0.0393701 * 5
-    #else:
-    #nyu = 2.77251253e-01 / (T - 4.46325281e+02)
-    nyu = 0.0033573067 #[in2/s]
+    if T <= 447:
+        nyu = 0.0033573067 #[in2/s]
+    else:
+        nyu = 2.77251253e-01 / (T - 4.46325281e+02)
+    #nyu = 0.0033573067 #[in2/s]
     return nyu 
 
 # RP-1 の熱伝導率を返す。
@@ -229,10 +230,12 @@ for x in range(len(R)):
     # 圧力損失計算
     rho_loc = 0.0252891 #RP-1の密度, [lb/in3]
     A_coolpath = Al / n #[in] #冷却溝一個の断面積
-    Re = (mldot/n) * d / rho_loc / A_coolpath / nyu(Tl)
+    Re = (mldot/110) * d / rho_loc / A_coolpath / nyu(Tl)
     f = 1/(-1.8 * np.log10(6.9/Re))**2
-    deltaP = f * 0.001 / d * rho_c * uc**2 /2. #[MPa] #ハーランドの式
-    dP += deltaP #[MPa]
+    deltaP = f * 0.001 / d * rho_c * uc**2 /2. #[Pa] #ハーランドの式
+    dP += deltaP #[Pa]
+    if x != 0:
+        out_Pl.append(out_Pl[-1]-deltaP*1e-6)
 
 
 
@@ -247,10 +250,13 @@ print('csv output start')
 
 out_Twg = np.array(out_Twg) #[R]
 out_Tl = np.array(out_Tl) #[R]
+out_Pl = np.array(out_Pl) #[Pa]
 out_Twg *= 5. / 9. #[K]
 out_Tl *= 5. / 9. #[K]
+out_Pl *= 1e-6 #[MPa]
 np.savetxt(os.path.dirname(__file__)+'/cool_out_Twg.csv', out_Twg.T)
 np.savetxt(os.path.dirname(__file__)+'/cool_out_Tl.csv', out_Tl.T)
+np.savetxt(os.path.dirname(__file__)+'/cool_out_Pl.csv', out_Pl.T)
 
 print('csv output complete')
 # ==================== 出力ここまで ==================--
@@ -258,7 +264,7 @@ print('csv output complete')
 # =================== グラフ描画ここから ===============-
 print('graphing start')
 
-print('Pressure Loss: ' + str(dP/10e6) + ' [MPa]')
+print('Pressure Loss: ' + str(dP/1e12) + ' [MPa]')
 plt.title("Temperature in Nozzle")
 plt.xlabel('Distance from Throat [m]')
 plt.ylabel('Temperature [K]')
@@ -266,6 +272,13 @@ plt.scatter(X,out_Tl, label='Tl',s=1)
 plt.scatter(X,out_Twg, label='Twg',s=1)
 #plt.scatter(X,Tg*5./9., label='Tg',s=1)
 plt.legend()
+plt.show()
+
+
+plt.title("Pressure in Coolant Path")
+plt.xlabel('Distance from Throat[m]')
+plt.ylabel('Pressure [MPa]')
+plt.scatter(X, out_Pl, s=1)
 plt.show()
 
 # =================== グラフ描画ここまで ==================

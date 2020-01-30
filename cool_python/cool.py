@@ -72,6 +72,7 @@ Tl0 *= 9. / 5. #[R]
 out_Tl = []
 out_Twg = []
 out_Pl = [Plin] 
+out_Twl = []
 
 # ==== csvから入力 =====
 print('input start')
@@ -200,7 +201,7 @@ for x in range(len(R)):
         Tl = Tl_next
         Twg = Twg_next
     # ２つの方法で計算した Tl_next が一致するまで計算する
-    epsilon = 1000.
+    epsilon = 2000.
     count = 0
     while np.abs(epsilon) > 1. and count < maxitr :
         if epsilon > 0:
@@ -227,6 +228,7 @@ for x in range(len(R)):
     # データ保存
     out_Tl.append(Tl)
     out_Twg.append(Twg)
+    out_Twl.append(Twl_next)
     # 圧力損失計算
     rho_loc = 0.0252891 #RP-1の密度, [lb/in3]
     A_coolpath = Al / n #[in] #冷却溝一個の断面積
@@ -235,7 +237,7 @@ for x in range(len(R)):
     deltaP = f * 0.001 / d * rho_c * uc**2 /2. #[Pa] #ハーランドの式
     dP += deltaP #[Pa]
     if x != 0:
-        out_Pl.append(out_Pl[-1]-deltaP*1e-6)
+        out_Pl.append(out_Pl[-1]-deltaP)
 
 
 
@@ -251,8 +253,10 @@ print('csv output start')
 out_Twg = np.array(out_Twg) #[R]
 out_Tl = np.array(out_Tl) #[R]
 out_Pl = np.array(out_Pl) #[Pa]
+out_Twl = np.array(out_Twl) #[R]
 out_Twg *= 5. / 9. #[K]
 out_Tl *= 5. / 9. #[K]
+out_Twl *= 5. / 9. #[K]
 out_Pl *= 1e-6 #[MPa]
 np.savetxt(os.path.dirname(__file__)+'/cool_out_Twg.csv', out_Twg.T)
 np.savetxt(os.path.dirname(__file__)+'/cool_out_Tl.csv', out_Tl.T)
@@ -264,13 +268,14 @@ print('csv output complete')
 # =================== グラフ描画ここから ===============-
 print('graphing start')
 
-print('Pressure Loss: ' + str(dP/1e12) + ' [MPa]')
+print('Pressure Loss: ' + str(dP/1e6) + ' [MPa]')
 plt.title("Temperature in Nozzle")
 plt.xlabel('Distance from Throat [m]')
 plt.ylabel('Temperature [K]')
-plt.scatter(X,out_Tl, label='Tl',s=1)
 plt.scatter(X,out_Twg, label='Twg',s=1)
 #plt.scatter(X,Tg*5./9., label='Tg',s=1)
+plt.scatter(X, out_Twl, label='Twl', s=1)
+plt.scatter(X,out_Tl, label='Tl',s=1)
 plt.legend()
 plt.show()
 

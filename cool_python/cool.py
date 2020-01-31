@@ -10,20 +10,20 @@ from scipy.optimize import curve_fit
 
 # 全体固定値
 # 燃焼ガスについて
-Cpg = 7.4257 * 1e+3 #[J/kgK] # スロート部での燃焼ガスの定圧比熱
+Cpg = 6.7224 * 1e+3 #[J/kgK] # スロート部での燃焼ガスの定圧比熱
 Cpg *= 0.000947817 / 2.20462 / (9./5.) #[btu/lb degF]
 
 gamma = 1.1259 # [無次元] # 燃焼ガスの比熱比
 
-Pc = 6. #[MPa] # 燃焼圧
+Pc = 13. #[MPa] # 燃焼圧
 Pc *= 145.038 #[psia]
 
-Dt = 0.062 * 2#[m] # スロート直径
+Dt = 0.04225 * 2#[m] # スロート直径
 Dt *= 39.3701 #[in]
 
 Rt = 0.95 * Dt #[in] # スロート部曲率半径
 
-cstar = 1754.0 # [m/s] # C*
+cstar = 1770.5 # [m/s] # C*
 cstar *= 3.28084 # [fps]
 
 g = 9.80665 #[m/s2] # 重力加速度
@@ -31,7 +31,7 @@ g *= 3.28084 #[fps2]
 
 # 冷却剤について
 # RP-1
-mldot = 10.30 #[kg/s] # 冷却剤流量
+mldot = 10.28 #[kg/s] # 冷却剤流量
 mldot *= 2.20462 #[lb/s]
 
 # ノズル素材について
@@ -51,11 +51,13 @@ d = np.sqrt(2) * a
 
 n = 100000000000000. * 1000.
 
+n *= 1. #13MPa用
+
 Al = a*b*n #[m2] # 冷却溝全部の断面積
 Al *= 39.3701 * 39.3701 #[in2]
 
 # 圧力損失計算用 SI単位のママ使用する。
-Plin = 1.4 * 6. * 1e6 #[Pa] # 冷却溝入口での冷却剤圧力
+Plin = 1.4 * Pc * 1e6 #[Pa] # 冷却溝入口での冷却剤圧力
 rho_c = 800. #[kg/m3] # 冷却剤密度
 uc = mldot / 2.20462 / rho_c / (a * b / 39.3701 / 39.3701) #[m/s] # 冷却剤流速
 dP = 0. #[Pa] # 圧力損失加算器
@@ -284,7 +286,7 @@ plt.title("Pressure in Coolant Path")
 plt.xlabel('Distance from Throat[m]')
 plt.ylabel('Pressure [MPa]')
 plt.scatter(X, out_Pl, s=1)
-plt.show()
+#plt.show()
 
 # =================== グラフ描画ここまで ==================
 

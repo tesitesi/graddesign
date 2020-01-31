@@ -17,39 +17,39 @@ M = np.array(M,dtype=np.float64)
 M_inj = 0.
 M_combend = 0.407
 M_throat = 1.
-M_exit = 3.41795
+M_exit = 4.345
 
 # 燃焼ガス比熱比
-gamma_inj = 1.1309
-gamma_combend = 1.1297
-gamma_throat = 1.1259
-gamma_exit = 1.1747
+gamma_inj = 1.1344
+gamma_combend = 1.1332
+gamma_throat = 1.1294
+gamma_exit = 1.1823
 
 # 燃焼ガス温度 [K]
-T_inj = 3678.34 #[K]
-T_combend = 3636.42 #[K]
-T_throat = 3497.34 #[K]
-T_exit = 1939.54 #[K]
+T_inj = 3799.08 #[K]
+T_combend = 3754.56 #[K]
+T_throat = 3604.69 #[K]
+T_exit = 1901.05 #[K]
 
 # 燃焼ガス圧力 [MPa]
-P_inj = 6.000 #[MPa]
-P_combend = 5.0538 #[MPa]
-P_throat = 3.2139 #[MPa]
-P_exit = 0.004674 #[MPa]
+P_inj = 13.000 #[MPa]
+P_combend = 10.946 #[MPa]
+P_throat = 6.9538 #[MPa]
+P_exit = 0.09761 #[MPa]
 
 # 燃焼ガス密度
-rho_inj = 4.8391 #[kg/m3]
-rho_combend = 4.1288 #[kg/m3]
-rho_throat = 2.7638 #[kg/m3]
-rho_exit = 8.1951e-3 #[kg/m3]
+rho_inj = 1.0268e1 #[kg/m3]
+rho_combend = 8.7595 #[kg/m3]
+rho_throat = 5.8696 #[kg/m3]
+rho_exit = 1.7471e-2 #[kg/m3]
 
 gamma = 0.
 
 
 x_inj = 0
-x_combend = 192
-x_throat = 286
-x_exit = 1404
+x_combend =  277
+x_throat = 341
+x_exit = 1079
 
 # よどみ点温度、圧力、密度
 T_0 = T_throat * (1 + 0.5 * (gamma_throat - 1 ))

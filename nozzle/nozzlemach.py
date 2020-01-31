@@ -18,20 +18,20 @@ A = np.array(A,dtype=np.float64)
 M_inj = 0.
 M_combend = 0.407
 M_throat = 1.
-M_exit = 4.286
+M_exit = 4.345
 
-gamma_inj = 1.1309
-gamma_combend = 1.1297
-gamma_throat = 1.1259
-gamma_exit = 1.1747
+gamma_inj = 1.1344
+gamma_combend = 1.1332
+gamma_throat = 1.1294
+gamma_exit = 1.1823
 
 gamma = 0.
 
 # dx によって変わる
 x_inj = 0
-x_combend = 192
-x_throat = 286
-x_exit = 1404
+x_combend =  277
+x_throat = 341
+x_exit = 1079
 
 M = np.ndarray(x_exit+1)
 
@@ -52,7 +52,7 @@ for x in range(x_combend, x_throat, 1):
     #M[x] = mach(A[x-1],A[x],M[x-1],gamma)
     M[x] = (M_combend * (x_throat - x) + M_throat * (x - x_combend)) / (x_throat - x_combend)
 
-M[x_throat] = 1. + 1e-3
+M[x_throat] = 1. + 1e-2
 
 # 膨張部
 for x in range(x_throat+1, x_exit, 1):
@@ -64,6 +64,8 @@ for x in range(x_throat+1, x_exit, 1):
 plt.title("Mach Number in Nozzle")
 plt.xlabel('Distance from Throat [m]')
 plt.ylabel('Mach Number [1]')
+print(X.shape)
+print(M.shape)
 plt.scatter(X,M,s=2,c='red')
 plt.grid(True)
 plt.show()

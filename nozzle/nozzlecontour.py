@@ -9,12 +9,12 @@ contour = [] #結果を入れる行列
 
 dx = 0.001 # 格子間隔 [m]
 
-r_t = 0.062 # スロート部半径 [m]
+r_t = 0.04225 # スロート部半径 [m]
 epsilon = 110. #開口比
 
 r_e = r_t * np.sqrt(epsilon) # 出口部半径 [m]
-l_conb = 0.193 # 燃焼室長さ [m]
-theta_i = 30.0 # 膨張接続部角度
+l_conb = 0.2785 # 燃焼室長さ [m]
+theta_i = 44.0 # 膨張接続部角度
 #theta_e = 8.0 # 出口角度 #廃止
 
 theta_i = theta_i * np.pi / 180.
